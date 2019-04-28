@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// Game master.
+/// Static class used for game management : performs intitialization, level loading, restart.
+/// </summary>
 public class GameMaster : MonoBehaviour
 {
     public static GameMaster instance;
-    private int m_nHexSlotHor = 6;
-    private int m_nHexSlotVer = 7;
 
     void Awake()
     {
@@ -20,6 +22,7 @@ public class GameMaster : MonoBehaviour
             instance = this;
         }
 
+        // When GameMaster is awake, resolution is forced (handy-like) and full screen is forbidden
 #if UNITY_STANDALONE
         Screen.SetResolution(Globals.SCREEN_HOR_SIZE, Globals.SCREEN_VER_SIZE, false);
         Screen.fullScreen = false;
@@ -33,19 +36,26 @@ public class GameMaster : MonoBehaviour
         Init();
     }
 
-    private void Init()
+
+    public void Init()
     {
-        LoadLevel(m_nHexSlotHor, m_nHexSlotVer);
+        // Level loading : the tiles and the items on them are generated
+        GridManager.instance.LoadLevel();
     }
 
-    // Update is called once per frame
-    void Update()
+    /// <summary>
+    /// Restart the level.
+    /// </summary>
+    public void Restart()
     {
+        // Check if the previous level finished to load, and if all the items are placed on the grid
+        if (GridManager.instance.LevelLoaded && GridManager.instance.LastGridCheckValid)
+        {
+            GridManager.instance.RestartLevel();
+            ScoreManager.instance.Init();
+            MovesManager.instance.Init();
+        }
 
     }
 
-    void LoadLevel(int nHexSlotHor, int nHexSlotVer)
-    {
-        GridManager.instance.LoadLevel(nHexSlotHor, nHexSlotVer);
-    }
 }

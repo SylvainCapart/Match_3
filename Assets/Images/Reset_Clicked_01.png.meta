@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: f734c03bfb3374912ad66ae68ebc8145
+guid: 3f86a3ab290574ea584b5d9ddbf36627
 TextureImporter:
   fileIDToRecycleName: {}
   externalObjects: {}
@@ -32,7 +32,7 @@ TextureImporter:
   textureSettings:
     serializedVersion: 2
     filterMode: -1
-    aniso: -1
+    aniso: 1
     mipBias: -100
     wrapU: 1
     wrapV: 1
