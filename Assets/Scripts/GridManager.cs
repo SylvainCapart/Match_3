@@ -381,52 +381,46 @@ public class GridManager : MonoBehaviour
         return -1;
     }
 
-    private IEnumerator CheckEmptyCo()
-    {
-        while (m_GridCheckActive)
-        {
-            for (int i = 0; i < m_GridHorSize; i++)
-            {
-                for (int j = 0; j < m_GridVerSize; j++)
-                {
-                    if (!m_PlayableGrid[i, j].Filled)
-                        yield return true;
-                }
-            }
-
-            yield return new WaitForSeconds(m_GridCheckDelay);
-        }
-    }
-
+    /// <summary>
+    /// Fills the empty hex tiles with items, on the column _indexY.
+    /// </summary>
+    /// <param name="_indexY">Index y.</param>
     public void FillEmptyHex(int _indexY)
     {
         IEnumerator fillEmptyCo = FillEmptyHexCo(_indexY);
         StartCoroutine(fillEmptyCo);
     }
 
+    /// <summary>
+    /// Fills the empty hex tiles with items, on the column _indexY.
+    /// </summary>
+    /// <param name="_indexY">Index y.</param>
     private IEnumerator FillEmptyHexCo(int _indexY)
     {
+        // for each row except the last one 
         for (int i = 0; i < m_GridHorSize - 1; i++)
         {
-
+            // if the tile is not filled and the tile above it is filled
             if (!m_PlayableGrid[i, _indexY].Filled && m_PlayableGrid[i + 1, _indexY].Filled)
             {
+                // move the Item above on the tile below
                 ItemManager.instance.MoveItem(m_PlayableGrid[i + 1, _indexY].Item, m_HexMap.CellToWorld(new Vector3Int(i, _indexY, 0)));
                 m_PlayableGrid[i + 1, _indexY].Item.GridIndex = new Vector3Int(i, _indexY, 0);
                 m_PlayableGrid[i, _indexY].Filled = true;
                 m_PlayableGrid[i + 1, _indexY].Filled = false;
 
+                // assign the item at its new place
                 m_PlayableGrid[i, _indexY].Item = m_PlayableGrid[i + 1, _indexY].Item;
-                //m_PlayableGrid[i + 1, j].Item = null;
             }
             yield return null;
         }
 
         int topIndex = m_GridHorSize - 1;
 
-
+        // if tiles of column _indexY and of last row, is not filled
         if (!m_PlayableGrid[topIndex, _indexY].Filled)
         {
+            // load a new random Item on the grid
             Item item = ItemManager.instance.LoadItem(m_HexMap.CellToWorld(new Vector3Int(topIndex, _indexY, 0)), new Vector3Int(topIndex, _indexY, 0));
             m_PlayableGrid[topIndex, _indexY] = new PlayableHex(item);
         }
